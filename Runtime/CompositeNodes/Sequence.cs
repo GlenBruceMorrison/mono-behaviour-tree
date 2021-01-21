@@ -17,6 +17,7 @@ namespace Patterns.BehaviourTree
 
                 if (status == NodeStatus.Success) continue;
                 if (status == NodeStatus.Running) return status;
+                if (status == NodeStatus.Failure) return status;
             }
 
             return NodeStatus.Failure;

@@ -63,7 +63,7 @@ namespace Patterns.BehaviourTree
 
 
 
-            if (!Evaluate())
+            if (Evaluate())
             {
                 if (FailImmediate)
                 {

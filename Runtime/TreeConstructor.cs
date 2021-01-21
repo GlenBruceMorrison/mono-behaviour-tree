@@ -145,7 +145,7 @@ namespace Patterns.BehaviourTree
                     PrintNode(child, n);
                 }
             }
-            /*
+
             if (node is Decorator decorator)
             {
                 if (decorator.Child == null)
@@ -156,7 +156,6 @@ namespace Patterns.BehaviourTree
                 var n = indentation + "==";
                 PrintNode(decorator.Child, n);
             }
-            */
         }
     }
 }
