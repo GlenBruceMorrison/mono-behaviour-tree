@@ -2,7 +2,18 @@
 
 ## In progress!!!!
 
+
+### Simple Use Case
+
+Performs the following:
+1. Do nothing if dead
+2. Run away from target if health if less than 10
+3. Chase target if not near it
+4. If close enough to target then attack it
+
 ![image info](./Example_Tree.png)
+
+
 
 ```cs
 using Patterns.BehaviourTree;
