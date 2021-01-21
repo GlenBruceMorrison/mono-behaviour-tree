@@ -9,28 +9,40 @@ namespace Patterns.BehaviourTree
     {
         private INode _root;
         private INode _current;
+        private INode Current
+        {
+            get
+            {
+                return _current;
+            }
+            set
+            {
+                _current = value;
+            }
+        }
 
         public TreeConstructor(INode root)
         {
             _root = root;
-            _current = _root;
+            Current = _root;
         }
 
         public TreeConstructor()
         {
             _root = new Sequence();
-            _current = _root;
+            Current = _root;
         }
 
-        public TreeConstructor AddComposite(Composite node)
+        private TreeConstructor AddComposite(Composite node)
         {
-            if (_current is Composite composite)
+            if (Current is Composite composite)
             {
                 composite.Add(node);
             }
-            
-            return this.Down();
+            Down();
+            return this;
         }
+
 
         public TreeConstructor Selector()
         {
@@ -63,45 +75,88 @@ namespace Patterns.BehaviourTree
             return Add(new ConditionalDelegate(func_condition, failImmediate));
         }
 
-        public TreeConstructor Add(INode node)
+        private TreeConstructor Add(INode node)
         {
-            if (_current is Composite composite)
+            if (Current is Composite composite)
             {
                 composite.Add(node);
             }
+
+            else if (Current is Decorator decorator)
+            {
+                decorator.Child = node;
+            }
+
             return this;
         }
 
         public TreeConstructor Down()
         {
-            if (_current is Composite composite)
+            if (Current is Composite composite)
             {
                 if (composite.Children.Count > 0)
                 {
-                    _current = composite.Children.First();
+                    Current = composite.Children.Last();
                 }
             }
+
+            else if (Current is Decorator decorator)
+            {
+                Current = decorator.Child;
+            }
+
             return this;
         }
 
         public TreeConstructor Up()
         {
-            _current = _current.Parent;
+            Current = Current.Parent;
             return this;
         }
 
         public TreeConstructor Root()
         {
-            _current = _root;
+            Current = _root;
             return this;
         }
 
         public INode Construct()
         {
             var value = _root;
-            _current = _root;
+            Current = _root;
             return value;
         }
-    }
 
+        public static void PrintNode(INode node)
+        {
+            string indentation = "";
+            PrintNode(node, indentation);
+        }
+
+        public static void PrintNode(INode node, string indentation)
+        {
+            Debug.Log(indentation + node.ToString());
+
+            if (node is Composite composite)
+            {
+                foreach (var child in composite.Children)
+                {
+                    var n = indentation + "==";
+                    PrintNode(child, n);
+                }
+            }
+            /*
+            if (node is Decorator decorator)
+            {
+                if (decorator.Child == null)
+                {
+                    return;
+                }
+
+                var n = indentation + "==";
+                PrintNode(decorator.Child, n);
+            }
+            */
+        }
+    }
 }

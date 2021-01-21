@@ -21,5 +21,10 @@ namespace Patterns.BehaviourTree
 
             return NodeStatus.Failure;
         }
+
+        public override string ToString()
+        {
+            return "[Sequence]";
+        }
     }
 }

@@ -31,4 +31,9 @@ public abstract class ActionMono : MonoBehaviour, INode
 
     public abstract void Activate();
     public abstract NodeStatus Run();
+    
+    public override string ToString()
+    {
+        return "[Action Mono]";
+    }
 }

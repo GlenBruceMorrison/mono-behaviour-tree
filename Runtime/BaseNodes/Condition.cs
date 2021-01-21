@@ -31,9 +31,13 @@ namespace Patterns.BehaviourTree
             if (!Evaluate())
             {
                 if (FailImmediate)
+                {
                     return NodeStatus.Failure;
+                }
                 else
+                {
                     return NodeStatus.Running;
+                }
             }
 
             return NodeStatus.Success;

@@ -16,5 +16,9 @@ namespace Patterns.BehaviourTree
         {
             return run_func();
         }
+        public override string ToString()
+        {
+            return "[Action Delegate]";
+        }
     }
 }

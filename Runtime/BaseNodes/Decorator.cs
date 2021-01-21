@@ -2,19 +2,29 @@
 {
     public abstract class Decorator : Node
     {
-        private Node _child;
+        private INode _child;
 
         public Decorator()
         {
 
         }
 
-        public Node Child
+        public INode Child
         {
             get
             {
                 return _child;
             }
+            set
+            {
+                value.Parent = this;
+                _child = value;
+            }
+        }
+
+        public override string ToString()
+        {
+            return "[Decorator]";
         }
     }
 }

@@ -16,5 +16,10 @@ namespace Patterns.BehaviourTree
         {
             return evaluate_func();
         }
+
+        public override string ToString()
+        {
+            return "[Conditional Delegate]";
+        }
     }
 }
