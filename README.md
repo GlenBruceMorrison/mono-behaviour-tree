@@ -18,8 +18,6 @@ public class Main : MonoBehaviour
     void Start()
     {
         tree = new TreeConstructor()
-            
-            // If health variable is 
             .ConditionalDelegate(() => return health <= 0)
             .ConditionalDelegate(() => health < 10)
             .Down()
