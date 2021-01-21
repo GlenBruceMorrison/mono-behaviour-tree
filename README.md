@@ -2,7 +2,7 @@
 
 ## In progress!!!!
 
-![image info](./Example_Diagram.png)
+![image info](./Example_Tree.png)
 
 ```cs
 using Patterns.BehaviourTree;
