@@ -1,6 +1,19 @@
 # Behaviour Tree For Unity
 
-In progress
+## :bomb:In progress:bomb:
+
+
+### Simple Use Case
+
+Performs the following:
+* :broken_heart: Do nothing if dead
+* :orange_heart: Run away from target if health if less than 10
+* :running: Chase target if not near it
+* :dagger: If close enough to target then attack it
+
+![image info](./Example_Tree.png)
+
+
 
 ```cs
 using Patterns.BehaviourTree;
@@ -52,3 +65,4 @@ public class Main : MonoBehaviour
 
 
 ```
+
