@@ -15,12 +15,9 @@ namespace Patterns.BehaviourTree
             {
                 var status = child.InternalRun();
 
-                if (status != NodeStatus.Running)
-                {
-                    continue;
-                }
-
-                return status;
+                if (status == NodeStatus.Failure) continue;
+                if (status == NodeStatus.Running) return status;
+                if (status == NodeStatus.Success) return status;
             }
 
             return NodeStatus.Failure;

@@ -2,7 +2,7 @@
 
 namespace Patterns.BehaviourTree
 {
-    public abstract class Condition : Decorator
+    public abstract class Condition : Node
     {
         private readonly bool _failImmediate = false;
 
@@ -26,56 +26,21 @@ namespace Patterns.BehaviourTree
 
         public abstract bool Evaluate();
 
-
-        /*
-         * [Revisit]
-         * 
-         * 
-         * 
-         */
         public override NodeStatus Run()
         {
-            if (Child != null)
-            {
-                var result = Evaluate();
-
-                // If true the run child
-                if (result)
-                {
-                    return Child.InternalRun();
-                }
-                else
-                {
-                    //if (FailImmediate)
-                    //{
-                        return NodeStatus.Success;
-                    //}
-                    //else
-                    //{
-                    //    return NodeStatus.Running;
-                    //}
-                }
-            }
-
-
-            ///////////////////
-
-
-
-
             if (Evaluate())
             {
-                if (FailImmediate)
-                {
-                    return NodeStatus.Failure;
-                }
-                else
-                {
-                    return NodeStatus.Running;
-                }
+                //if (FailImmediate)
+                //{
+                    return NodeStatus.Success;
+                //}
+                //else
+                //{
+                //    return NodeStatus.Running;
+                //}
             }
 
-            return NodeStatus.Success;
+            return NodeStatus.Failure;
         }
     }
 }

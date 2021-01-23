@@ -33,6 +33,14 @@ namespace Patterns.BehaviourTree
             Current = _root;
         }
 
+        public INode Construct()
+        {
+            var value = _root;
+            Current = _root;
+            return value;
+        }
+
+        #region Adding
         private TreeConstructor AddComposite(Composite node)
         {
             if (Current is Composite composite)
@@ -42,7 +50,6 @@ namespace Patterns.BehaviourTree
             Down();
             return this;
         }
-
 
         public TreeConstructor Selector()
         {
@@ -64,15 +71,14 @@ namespace Patterns.BehaviourTree
             return Add(transform.GetComponentInChildren<T>());
         }
 
-
         public TreeConstructor ActionDelegate(Func<NodeStatus> func_run)
         {
             return Add(new ActionDelegate(func_run));
         }
 
-        public TreeConstructor ConditionalDelegate(Func<bool> func_condition, bool failImmediate = false)
+        public TreeConstructor ConditionalDelegate(Func<bool> func_condition)
         {
-            return Add(new ConditionalDelegate(func_condition, failImmediate));
+            return Add(new ConditionalDelegate(func_condition));
         }
 
         private TreeConstructor Add(INode node)
@@ -89,7 +95,9 @@ namespace Patterns.BehaviourTree
 
             return this;
         }
+        #endregion
 
+        #region traversing
         public TreeConstructor Down()
         {
             if (Current is Composite composite)
@@ -119,14 +127,9 @@ namespace Patterns.BehaviourTree
             Current = _root;
             return this;
         }
+        #endregion
 
-        public INode Construct()
-        {
-            var value = _root;
-            Current = _root;
-            return value;
-        }
-
+        #region Degbug
         public static void PrintNode(INode node)
         {
             string indentation = "";
@@ -157,5 +160,6 @@ namespace Patterns.BehaviourTree
                 PrintNode(decorator.Child, n);
             }
         }
+        #endregion
     }
 }
