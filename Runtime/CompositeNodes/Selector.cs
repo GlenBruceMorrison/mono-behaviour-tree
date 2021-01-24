@@ -4,6 +4,11 @@ namespace Patterns.BehaviourTree
 {
     public class Selector : Composite
     {
+        public override void HandleDeactivation()
+        {
+            Children.ForEach(x => x.InternalDeactivate());
+        }
+
         public override NodeStatus Run()
         {
             if (Children.Count == 0)

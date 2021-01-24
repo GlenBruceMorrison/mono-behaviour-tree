@@ -2,7 +2,7 @@
 
 namespace Patterns.BehaviourTree
 {
-    public class ActionDelegate : Node
+    public class ActionDelegate : Node, INode
     {
         public Func<NodeStatus> run_func;
 

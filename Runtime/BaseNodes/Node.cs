@@ -1,21 +1,24 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Patterns.BehaviourTree
 {
     public interface INode
     {
-        Node Parent { get; set; }
-        void InternalActivate();
+        INode Parent { get; set; }
+        void InternalInitiate();
+        void InternalDeactivate();
         NodeStatus InternalRun();
     }
 
     public abstract class Node : INode
     {
-        private Node _parent;
+        private INode _parent;
+        private List<INode> _children = new List<INode>();
 
-        private bool _isActive;
+        private bool _initiated;
 
-        public Node Parent
+        public INode Parent
         {
             set
             {
@@ -27,56 +30,80 @@ namespace Patterns.BehaviourTree
             }
         }
 
-        public bool IsActive
+        public List<INode> Children
         {
             get
             {
-                return _isActive;
+                return _children;
+            }
+        }
+
+        public bool Initiated
+        {
+            get
+            {
+                return _initiated;
             }
             set
             {
-                if (_isActive == value)
+                if (_initiated == value)
                 {
                     return;
                 }
 
-                _isActive = true;
+                _initiated = value;
 
-                if (_isActive)
+                if (_initiated)
                 {
-                    InternalActivate();
+                    HandleInitiation();
+                }
+                else
+                {
+                    HandleDeactivation();
                 }
             }
         }
 
-        public void InternalActivate()
+        public void InternalInitiate()
         {
-            if (IsActive)
+            if (Initiated)
             {
                 return;
             }
 
-            IsActive = true;
+            Initiated = true;
+        }
 
-            InternalActivate();
+        public void InternalDeactivate()
+        {
+            if (!Initiated)
+            {
+                return;
+            }
+
+            Initiated = false;
         }
 
         public NodeStatus InternalRun()
         {
-            if (!IsActive)
+            if (!Initiated)
             {
-                InternalActivate();
+                InternalInitiate();
             }
 
             var status = Run();
 
+            if (status != NodeStatus.Running)
+            {
+                InternalDeactivate();
+            }
+
             return status;
         }
 
-        public virtual void Activate()
-        {
+        public virtual void HandleInitiation() { }
 
-        }
+        public virtual void HandleDeactivation() { }
 
         public virtual NodeStatus Run()
         {

@@ -35,9 +35,8 @@ namespace Patterns.BehaviourTree
 
         public INode Construct()
         {
-            var value = _root;
             Current = _root;
-            return value;
+            return Current;
         }
 
         #region Adding
@@ -80,7 +79,6 @@ namespace Patterns.BehaviourTree
         {
             return Add(new ConditionalDelegate(func_condition));
         }
-
         private TreeConstructor Add(INode node)
         {
             if (Current is Composite composite)

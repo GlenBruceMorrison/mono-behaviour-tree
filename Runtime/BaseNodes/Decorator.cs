@@ -1,6 +1,8 @@
-﻿namespace Patterns.BehaviourTree
+﻿using System.Collections.Generic;
+
+namespace Patterns.BehaviourTree
 {
-    public abstract class Decorator : Node
+    public abstract class Decorator : Node, INode
     {
         private INode _child;
 
@@ -13,7 +15,7 @@
         {
             get
             {
-                return _child;
+                return Children[0];
             }
             set
             {

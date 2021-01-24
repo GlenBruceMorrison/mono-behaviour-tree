@@ -2,13 +2,8 @@
 
 namespace Patterns.BehaviourTree
 {
-    public class Sequence : Composite, INode
+    public class Parallel : Composite
     {
-        public override void HandleDeactivation()
-        {
-            Children.ForEach(x => x.InternalDeactivate());
-        }
-
         public override NodeStatus Run()
         {
             if (Children.Count == 0)
@@ -16,21 +11,28 @@ namespace Patterns.BehaviourTree
                 return NodeStatus.Success;
             }
 
-            foreach(var child in Children)
+            var allSucceed = true;
+
+            foreach (var child in Children)
             {
                 var status = child.InternalRun();
 
-                if (status == NodeStatus.Success) continue;
-                if (status == NodeStatus.Running) return status;
                 if (status == NodeStatus.Failure) return status;
+                if (status == NodeStatus.Running) allSucceed = false;
             }
 
-            return NodeStatus.Failure;
+            if (allSucceed)
+            {
+                return NodeStatus.Success;
+            }
+
+            return NodeStatus.Running;
         }
 
         public override string ToString()
         {
-            return "[Sequence]";
+            return "[Selector]";
         }
     }
+
 }
