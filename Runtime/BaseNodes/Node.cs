@@ -1,40 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using UnityEditor;
+using UnityEngine;
 
-namespace Patterns.BehaviourTree
+namespace MonoBehaviourTree
 {
-    public interface INode
+    public enum NodeStatus
     {
-        INode Parent { get; set; }
-        void InternalInitiate();
-        void InternalDeactivate();
-        NodeStatus InternalRun();
+        Success,
+        Failure,
+        Running
     }
 
-    public abstract class Node : INode
+    public abstract class Node : MonoBehaviour
     {
-        private INode _parent;
-        private List<INode> _children = new List<INode>();
-
+        private BehaviourTree _root;
+        private Node _parent;
         private bool _initiated;
+        private bool _running;
 
-        public INode Parent
+        public Node Parent
         {
-            set
-            {
-                _parent = value;
-            }
             get
             {
+                if (_parent == null)
+                {
+                    _parent = GetComponent<Node>();
+                }
+
                 return _parent;
             }
         }
 
-        public List<INode> Children
+        public BehaviourTree Root
         {
             get
             {
-                return _children;
+                if (_root == null)
+                {
+                    _root = GetComponentInParent<BehaviourTree>();
+                }
+
+                return _root;
             }
         }
 
@@ -55,59 +65,65 @@ namespace Patterns.BehaviourTree
 
                 if (_initiated)
                 {
-                    HandleInitiation();
+                    InternalEntry();
                 }
                 else
                 {
-                    HandleDeactivation();
+                    InternalExit();
                 }
             }
         }
-
-        public void InternalInitiate()
+        public bool Running
         {
-            if (Initiated)
+            get
             {
-                return;
+                return _running;
             }
-
-            Initiated = true;
         }
 
-        public void InternalDeactivate()
+        //public abstract void InitializeData(ref Dictionary<string, object> treeData);
+
+        internal NodeStatus InternalRun()
         {
             if (!Initiated)
             {
-                return;
-            }
-
-            Initiated = false;
-        }
-
-        public NodeStatus InternalRun()
-        {
-            if (!Initiated)
-            {
-                InternalInitiate();
+                Initiated = true;
             }
 
             var status = Run();
 
             if (status != NodeStatus.Running)
             {
-                InternalDeactivate();
+                Exit();
             }
 
             return status;
         }
 
-        public virtual void HandleInitiation() { }
-
-        public virtual void HandleDeactivation() { }
-
-        public virtual NodeStatus Run()
+        internal void InternalEntry()
         {
-            return NodeStatus.Success;
+            Entry();
+            _running = true;
+        }
+
+        internal void InternalExit()
+        {
+            Exit();
+            _running = false;
+        }
+
+        public abstract void Entry();
+
+        public abstract void Exit();
+
+        public abstract NodeStatus Run();
+
+        [MenuItem("GameObject/BehaviourTree/Action")]
+        private static void CreateMenu()
+        {
+            var obj = new GameObject("Action");
+            obj.transform.parent = Selection.activeTransform;
+            Selection.activeGameObject = obj;
         }
     }
 }

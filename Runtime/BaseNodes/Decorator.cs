@@ -1,32 +1,38 @@
-﻿using System.Collections.Generic;
+﻿using UnityEditor;
+using UnityEngine;
 
-namespace Patterns.BehaviourTree
+namespace MonoBehaviourTree
 {
-    public abstract class Decorator : Node, INode
+    public abstract class Decorator : Node
     {
-        private INode _child;
+        private Node _child;
 
-        public Decorator()
-        {
-
-        }
-
-        public INode Child
+        public Node Child
         {
             get
             {
-                return Children[0];
-            }
-            set
-            {
-                value.Parent = this;
-                _child = value;
+                return _child;
             }
         }
 
-        public override string ToString()
+        public override void Entry()
         {
-            return "[Decorator]";
+            Child.InternalEntry();
+        }
+
+        public override void Exit()
+        {
+
+        }
+
+        public override NodeStatus Run()
+        {
+            if (Child == null)
+            {
+                return NodeStatus.Success;
+            }
+
+            return Child.InternalRun();
         }
     }
 }

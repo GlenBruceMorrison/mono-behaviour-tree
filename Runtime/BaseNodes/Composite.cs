@@ -1,13 +1,27 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
-namespace Patterns.BehaviourTree
+namespace MonoBehaviourTree
 {
-    public abstract class Composite : Node, INode
+    public abstract class Composite : Node
     {
-        public void Add(INode node)
+        private List<Node> _children = new List<Node>();
+
+        public List<Node> Children
         {
-            Children.Add(node);
-            node.Parent = this;
+            get
+            {
+                if (_children == null || _children.Count <= 0)
+                {
+                    foreach (Transform child in transform)
+                    {
+                        var node = child.GetComponent<Node>();
+                        _children.Add(node);
+                    }
+                }
+
+                return _children;
+            }
         }
     }
 }

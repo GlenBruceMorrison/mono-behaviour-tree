@@ -1,9 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using UnityEditor;
+using UnityEngine;
 
-namespace Patterns.BehaviourTree
+namespace MonoBehaviourTree
 {
     public class Parallel : Composite
     {
+        public override void Entry()
+        {
+
+        }
+
+        public override void Exit()
+        {
+            Children.ForEach(x => x.InternalExit());
+        }
+
         public override NodeStatus Run()
         {
             if (Children.Count == 0)
@@ -29,10 +40,13 @@ namespace Patterns.BehaviourTree
             return NodeStatus.Running;
         }
 
-        public override string ToString()
+        [MenuItem("GameObject/BehaviourTree/Parallel")]
+        private static void CreateMenu()
         {
-            return "[Selector]";
+            var obj = new GameObject("Parallel");
+            obj.AddComponent<Parallel>();
+            obj.transform.parent = Selection.activeTransform;
+            Selection.activeGameObject = obj;
         }
     }
-
 }

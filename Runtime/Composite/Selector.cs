@@ -1,12 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using UnityEditor;
+using UnityEngine;
 
-namespace Patterns.BehaviourTree
+namespace MonoBehaviourTree
 {
     public class Selector : Composite
     {
-        public override void HandleDeactivation()
+        public override void Entry()
         {
-            Children.ForEach(x => x.InternalDeactivate());
+
+        }
+
+        public override void Exit()
+        {
+            Children.ForEach(x => x.InternalExit());
         }
 
         public override NodeStatus Run()
@@ -16,7 +22,7 @@ namespace Patterns.BehaviourTree
                 return NodeStatus.Success;
             }
 
-            foreach(var child in Children)
+            foreach (var child in Children)
             {
                 var status = child.InternalRun();
 
@@ -28,10 +34,13 @@ namespace Patterns.BehaviourTree
             return NodeStatus.Failure;
         }
 
-        public override string ToString()
+        [MenuItem("GameObject/BehaviourTree/Selector")]
+        private static void CreateMenu()
         {
-            return "[Selector]";
+            var obj = new GameObject("Selector");
+            obj.AddComponent<Selector>();
+            obj.transform.parent = Selection.activeTransform;
+            Selection.activeGameObject = obj;
         }
     }
-
 }
