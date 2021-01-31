@@ -11,13 +11,18 @@ namespace MonoBehaviourTree
         {
             get
             {
+                if (_child == null)
+                {
+                    _child = transform.GetChild(0).GetComponent<Node>();
+                }
+
                 return _child;
             }
         }
 
         public override void Entry()
         {
-            Child.InternalEntry();
+            Child.Activate();
         }
 
         public override void Exit()

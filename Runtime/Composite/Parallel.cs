@@ -12,7 +12,7 @@ namespace MonoBehaviourTree
 
         public override void Exit()
         {
-            Children.ForEach(x => x.InternalExit());
+            Children.ForEach(x => x.Deactivate());
         }
 
         public override NodeStatus Run()

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
 namespace MonoBehaviourTree
@@ -19,8 +14,7 @@ namespace MonoBehaviourTree
     {
         private BehaviourTree _root;
         private Node _parent;
-        private bool _initiated;
-        private bool _running;
+        private bool _active = false;
 
         public Node Parent
         {
@@ -48,73 +42,91 @@ namespace MonoBehaviourTree
             }
         }
 
-        public bool Initiated
+        public bool Active
         {
             get
             {
-                return _initiated;
+                return _active;
             }
             set
             {
-                if (_initiated == value)
-                {
-                    return;
-                }
+                _active = value;
 
-                _initiated = value;
-
-                if (_initiated)
+                if (_active)
                 {
-                    InternalEntry();
+                    gameObject.name = $"(active){gameObject.name}";
                 }
                 else
                 {
-                    InternalExit();
+                    gameObject.name = gameObject.name.Replace("(active)", string.Empty);
                 }
             }
         }
-        public bool Running
+
+        public bool IsParent
         {
             get
             {
-                return _running;
+                return transform.childCount > 0;
             }
         }
 
-        //public abstract void InitializeData(ref Dictionary<string, object> treeData);
-
         internal NodeStatus InternalRun()
         {
-            if (!Initiated)
+            if (!Active)
             {
-                Initiated = true;
+                Activate();
             }
 
             var status = Run();
 
             if (status != NodeStatus.Running)
             {
-                Exit();
+                Deactivate();
             }
 
             return status;
         }
 
-        internal void InternalEntry()
+        internal void Activate()
         {
+            if (Active)
+            {
+                return;
+            }
+
             Entry();
-            _running = true;
+            Active = true;
+
+            if (IsParent)
+            {
+                ParentEntry();
+            }
         }
 
-        internal void InternalExit()
+        internal void Deactivate()
         {
+            if (!Active)
+            {
+                return;
+            }
+
             Exit();
-            _running = false;
+            Active = false;
+
+            if (IsParent)
+            {
+                ParentExit();
+            }
         }
 
-        public abstract void Entry();
+        public virtual void ParentEntry() { }
 
-        public abstract void Exit();
+        public virtual void ParentExit() { }
+
+        public virtual void Entry() { }
+
+        public virtual void Exit() { }
 
         public abstract NodeStatus Run();
 

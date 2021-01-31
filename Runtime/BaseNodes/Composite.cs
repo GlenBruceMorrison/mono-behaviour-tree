@@ -23,5 +23,15 @@ namespace MonoBehaviourTree
                 return _children;
             }
         }
+
+        public override void ParentEntry()
+        {
+            Children.ForEach(x => x.ParentEntry());
+        }
+
+        public override void ParentExit()
+        {
+            Children.ForEach(x => x.ParentExit());
+        }
     }
 }

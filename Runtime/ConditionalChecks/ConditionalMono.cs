@@ -19,7 +19,7 @@ namespace MonoBehaviourTree
                 return value;
             }
 
-            return Root.GetData<T>(otherTreeValue);
+            return Root.BlackBoard.Get<T>(otherTreeValue);
         }
 
         public override bool CompareValues(T treeValue)
@@ -47,7 +47,7 @@ namespace MonoBehaviourTree
 
         public override bool Evaluate()
         {
-            object treeValue = Root.GetData(treeValueName);
+            object treeValue = Root.BlackBoard.Get(treeValueName);
             T compareValue = default;
 
             if (treeValue is Func<T> val)

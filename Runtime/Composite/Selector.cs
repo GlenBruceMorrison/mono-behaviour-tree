@@ -7,12 +7,12 @@ namespace MonoBehaviourTree
     {
         public override void Entry()
         {
-
+            //Children.ForEach(x => x.InternalEntry());
         }
 
         public override void Exit()
         {
-            Children.ForEach(x => x.InternalExit());
+            Children.ForEach(x => x.Deactivate());
         }
 
         public override NodeStatus Run()

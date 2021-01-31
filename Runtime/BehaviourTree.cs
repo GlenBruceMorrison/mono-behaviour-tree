@@ -4,9 +4,75 @@ using UnityEngine;
 using UnityEditor;
 using System.Linq;
 using System;
+using System.ComponentModel;
 
 namespace MonoBehaviourTree
 {
+    public class BlackBoard : INotifyPropertyChanged, INotifyPropertyChanging
+    {
+        private Dictionary<string, object> _data = new Dictionary<string, object>();
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangingEventHandler PropertyChanging;
+
+        public void Set<T>(string name, T data)
+        {
+            if (_data.ContainsKey(name))
+            {
+                _data[name] = data;
+                return;
+            }
+
+            _data.Add(name, data);
+        }
+
+        public void Set(string name, object data)
+        {
+            if (_data.ContainsKey(name))
+            {
+                _data[name] = data;
+                return;
+            }
+
+            _data.Add(name, data);
+        }
+
+        public object Get(string name)
+        {
+            return _data[name];
+        }
+
+        public T Get<T>(string name)
+        {
+            try
+            {
+                var data = _data[name];
+
+                if (data is Func<T> func)
+                {
+                    return func.Invoke();
+                }
+
+                return (T)_data[name];
+            }
+            catch (InvalidCastException ex)
+            {
+                Debug.LogError($"Cast is not valid for {name} to type {typeof(T).ToString()}");
+            }
+            catch (KeyNotFoundException ex)
+            {
+                Debug.LogWarning($"Key [{name}] does not exist in blackboard at this time.");
+            }
+
+            return default;
+        }
+
+        public T Get<T>()
+        {
+            return (T)_data.Where(x => x.Value.GetType() == typeof(T)).FirstOrDefault().Value;
+        }
+    }
+
     public class BehaviourTree : MonoBehaviour
     {
         public class Builder
@@ -68,7 +134,7 @@ namespace MonoBehaviourTree
         [SerializeField]
         private List<Node> _children;
 
-        private Dictionary<string, object> _data = new Dictionary<string, object>();
+        private BlackBoard _blackBoard = new BlackBoard();
 
         public Node Current
         {
@@ -85,6 +151,14 @@ namespace MonoBehaviourTree
                 
 
                 return _children;
+            }
+        }
+
+        public BlackBoard BlackBoard
+        {
+            get
+            {
+                return _blackBoard;
             }
         }
 
@@ -114,47 +188,6 @@ namespace MonoBehaviourTree
         public void Update()
         {
             _current.InternalRun();
-        }
-
-        public void SetData(string name, object data)
-        {
-            if (_data.ContainsKey(name))
-            {
-                _data[name] = data;
-                return;
-            }
-
-            _data.Add(name, data);
-        }
-
-        public void SetData<T>(T data)
-        {
-            if (GetData<T>() == null)
-            {
-                _data.Add(new GUID().ToString(), data);
-            }
-        }
-
-        public object GetData(string name)
-        {
-            return _data[name];
-        }
-
-        public T GetData<T>(string name)
-        {
-            var data = _data[name];
-
-            if (data is Func<T> func)
-            {
-                return func.Invoke();
-            }
-
-            return (T)_data[name];
-        }
-
-        public T GetData<T>()
-        {
-            return (T)_data.Where(x => x.Value.GetType() == typeof(T)).FirstOrDefault().Value;
         }
     }
 }
